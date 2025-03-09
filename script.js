@@ -1,13 +1,5 @@
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCPz8zBucxA8OJv7G19JgArbFPNqCpckSA",
-  authDomain: "github-webpage-d25a7.firebaseapp.com",
-  databaseURL: "https://github-webpage-d25a7-default-rtdb.firebaseio.com",
-  projectId: "github-webpage-d25a7",
-  storageBucket: "github-webpage-d25a7.firebasestorage.app",
-  messagingSenderId: "872847333231",
-  appId: "1:872847333231:web:948b3508ece2b7dd74fa9a",
-  measurementId: "G-TSJHN7Q0CN"
 };
 
 // Initialize Firebase
