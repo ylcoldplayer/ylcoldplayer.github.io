@@ -3,42 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ylcoldplayer</title>
+    <meta name="description" content="Yuanlong Chen — software engineer and researcher working on digital advertising, machine learning, and reinforcement learning.">
+    <title>Yuanlong Chen — Research &amp; Engineering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-    <!-- <script defer src="script.js"></script> -->
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#books">Books</a></li>
-            <!-- <li><a href="#contact">Contact</a></li> -->
-        </ul>
-    </nav>
-    
-    <section id="about">
-        <h1>About Me</h1>
-        <p>My name is Yuanlong, I'm a software engineer working on ads bidding/pacing/auction. You can reach me at: <a href="mailto:ychenfd@gmail.com">ychenfd@gmail.com</a></p>
-    </section>
-    
-    <section id="books">
-        <h1>Books</h1>
-        <p> <a href="books/main.pdf"> A Pratical Guide to Budget Pacing Algorithms in Digital Advertising </a></p>
-    </section>
-    
-   <!--  <section id="contact">
-        <h1>Contact</h1>
-        <p>Reach me at: <a href="mailto:ychenfd@gmail.com">ychenfd@gmail.com</a></p>
-    </section> -->
-    
-    <!-- <footer>
-        <p>Visitor Count: <span id="visitor-count">Loading...</span></p>
-        <div id="admin-section" style="display: none;">
-            <h3>Visitor IPs</h3>
-            <ul id="visitor-ips"></ul>
-        </div>
-    </footer> -->
+    <header class="site-header">
+        <nav class="nav-wrap" aria-label="Main navigation">
+            <a class="wordmark" href="#top" aria-label="Yuanlong Chen home">YC<span>.</span></a>
+            <div class="nav-links"><a href="#about">About</a><a href="#publications">Publications</a><a href="#books">Book</a></div>
+            <a class="nav-contact" href="mailto:ychenfd@gmail.com">Get in touch <span aria-hidden="true">↗</span></a>
+        </nav>
+    </header>
+    <main id="top">
+        <section id="about" class="hero section-shell">
+            <div class="hero-copy">
+                <p class="eyebrow">Software engineer · researcher</p>
+                <h1>Building systems that make <em>complexity</em> useful.</h1>
+                <p class="hero-intro">I’m Yuanlong Chen, a software engineer working on ads bidding, pacing, and auction systems. My research interests span digital advertising, machine learning, and reinforcement learning.</p>
+                <div class="hero-actions"><a class="button button-primary" href="#publications">Explore my work <span aria-hidden="true">↓</span></a><a class="text-link" href="https://scholar.google.com/citations?user=QtXkIYYAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar <span aria-hidden="true">↗</span></a></div>
+            </div>
+            <div class="hero-mark" aria-hidden="true"><span>Y</span><span>C</span><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div></div>
+        </section>
+        <section id="publications" class="content-section section-shell">
+            <div class="section-heading"><div><p class="eyebrow">Selected record</p><h2>Publications</h2></div><p class="section-note">Seven works listed on <a href="https://scholar.google.com/citations?user=QtXkIYYAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>.</p></div>
+            <div class="publication-list">
+                <article class="publication"><span class="publication-year">2026</span><div class="publication-body"><h3><a href="https://arxiv.org/abs/2606.15978" target="_blank" rel="noopener">Scalar-Stepsize Nonuniform Monte Carlo Optimistic Policy Iteration: A Certified Counterexample</a></h3><p class="authors">Yuanlong Chen</p><p class="venue">arXiv preprint · arXiv:2606.15978</p></div><a class="publication-arrow" href="https://arxiv.org/abs/2606.15978" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+                <article class="publication"><span class="publication-year">2026</span><div class="publication-body"><h3><a href="https://arxiv.org/abs/2603.07721" target="_blank" rel="noopener">A Lightweight MPC Bidding Framework for Brand Auction Ads</a></h3><p class="authors">Yuanlong Chen, Bowen Zhu, Bing Xia, Yichuan Wang</p><p class="venue">arXiv preprint · arXiv:2603.07721</p></div><a class="publication-arrow" href="https://arxiv.org/abs/2603.07721" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+                <article class="publication"><span class="publication-year">2025</span><div class="publication-body"><h3><a href="https://arxiv.org/abs/2503.06942" target="_blank" rel="noopener">A Practical Guide to Budget Pacing Algorithms in Digital Advertising</a></h3><p class="authors">Yuanlong Chen</p><p class="venue">arXiv preprint · arXiv:2503.06942</p></div><a class="publication-arrow" href="https://arxiv.org/abs/2503.06942" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+                <article class="publication"><span class="publication-year">2022</span><div class="publication-body"><h3><a href="https://arxiv.org/abs/2202.12472" target="_blank" rel="noopener">Bidding Agent Design in the LinkedIn Ad Marketplace</a></h3><p class="authors">Yuan Gao, Kaiyu Yang, Yuanlong Chen, Min Liu, Noureddine El Karoui</p><p class="venue">arXiv preprint · arXiv:2202.12472</p></div><a class="publication-arrow" href="https://arxiv.org/abs/2202.12472" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+                <article class="publication"><span class="publication-year">2018</span><div class="publication-body"><h3><a href="https://arxiv.org/abs/1808.08763" target="_blank" rel="noopener">On the Convergence of Optimistic Policy Iteration for Stochastic Shortest Path Problem</a></h3><p class="authors">Yuanlong Chen</p><p class="venue">arXiv preprint · arXiv:1808.08763</p></div><a class="publication-arrow" href="https://arxiv.org/abs/1808.08763" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+                <article class="publication"><span class="publication-year">2018</span><div class="publication-body"><h3><a href="https://doi.org/10.2140/paa.2019.1.101" target="_blank" rel="noopener">Dispersive Estimates for the Wave Equation on Riemannian Manifolds of Bounded Curvature</a></h3><p class="authors">Yuanlong Chen, Hart F. Smith</p><p class="venue">Pure and Applied Analysis · 1 (1), 101–148</p></div><a class="publication-arrow" href="https://doi.org/10.2140/paa.2019.1.101" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+                <article class="publication"><span class="publication-year">2017</span><div class="publication-body"><h3><a href="https://digital.lib.washington.edu/researchworks/items/09ba8802-569e-4323-b137-a225ad71b554" target="_blank" rel="noopener">Strichartz Estimates for the Wave Equation on Riemannian Manifolds of Bounded Curvature</a></h3><p class="authors">Yuanlong Chen</p><p class="venue">PhD thesis · University of Washington</p></div><a class="publication-arrow" href="https://digital.lib.washington.edu/researchworks/items/09ba8802-569e-4323-b137-a225ad71b554" target="_blank" rel="noopener" aria-label="Read publication">↗</a></article>
+            </div>
+        </section>
+        <section id="books" class="book-section section-shell"><div class="book-card"><div class="book-label">Book / 2025</div><div><h2>A Practical Guide to Budget Pacing Algorithms in Digital Advertising</h2><p>A hands-on introduction for engineers working at the intersection of auctions, bidding, and budget delivery.</p><a class="text-link" href="books/main.pdf">Read the book <span aria-hidden="true">↗</span></a></div></div></section>
+    </main>
+    <footer class="site-footer section-shell"><span>© 2026 Yuanlong Chen</span><a href="mailto:ychenfd@gmail.com">ychenfd@gmail.com</a></footer>
 </body>
 </html>
