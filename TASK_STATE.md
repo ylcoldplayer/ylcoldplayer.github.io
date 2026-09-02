@@ -9,6 +9,6 @@
 - Files modified: `index.html`, `TASK_STATE.md`.
 - Commands/checks: `rg -n -i "google scholar|scholar.google" . --glob '!node_modules' --glob '!.git'` returned no matches after the edit; `git diff --check` passed.
 - Known blockers: None.
-- Git state: branch `master`, HEAD `30dceb7`; uncommitted changes are the requested edit and this checkpoint.
+- Git state: branch `master`, HEAD `6228dab`; working tree was clean after the requested commit and push.
 - Exact next action: None; optionally review the rendered homepage.
 - Restart procedure: Run `git status --short`, inspect `git diff -- index.html`, and rerun the Scholar-link search and `git diff --check`.
