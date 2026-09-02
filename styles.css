@@ -242,6 +242,10 @@ h2 {
     border-bottom: 1px solid var(--line);
 }
 
+.publication-body {
+    font-family: var(--serif);
+}
+
 .publication-year {
     padding-top: 4px;
     color: var(--muted);
