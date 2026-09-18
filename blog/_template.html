@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+  Copy this file to blog/<slug>.html to start a new post, then:
+    1. fill in the title (twice: <title> and h2.post-title), description and date
+    2. write the body inside div.post-content
+    3. add an entry at the TOP of the list in blog/index.html
+    4. add it to the "Recent posts" sidebar block in the other posts
+
+  Math: $inline$ or \(inline\); $$display$$ or \[display\]; and AMS
+  environments such as \begin{equation}...\end{equation} directly.
+  Numbered equations take \label{eq:foo} and are referenced with \eqref{eq:foo}.
+  Shorthands defined in math.js: \R \N \E \P \eps \norm{} \abs{} \set{}
+  \argmax \argmin.
+
+  Boxed environments: div.theorem, .lemma, .proposition, .corollary,
+  .definition, .remark, .example — each opens with
+  <span class="env-name">Theorem 1.</span>
+  Proofs use div.proof and close with <span class="qed">$\square$</span>.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TODO one-sentence summary.">
+    <title>TODO post title — Yuanlong Chen</title>
+    <link rel="stylesheet" href="../styles.css?v=20260918-2">
+    <script src="math.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body class="center">
+<div id="wrapper">
+
+    <div id="header">
+        <div id="intro">
+            <h1><span id="blog-title"><a href="../index.html">Yuanlong Chen</a></span></h1>
+            <p id="tagline">Ads bidding, pacing, and auction systems</p>
+        </div>
+        <div id="navigation">
+            <ul class="menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#publications">Publications</a></li>
+                <li><a href="../index.html#book">Book</a></li>
+                <li class="current-menu-item"><a href="index.html">Blog</a></li>
+                <li><a href="mailto:ychenfd@gmail.com">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <div id="primary" class="primary content">
+
+            <div class="entry">
+                <h2 class="post-title">TODO post title</h2>
+                <p class="post-metadata">TODO date in TODO categories &middot; Tags: TODO</p>
+
+                <div class="post-content">
+
+                    <p>Opening paragraph. Inline math looks like $\gamma \in (0,1)$.</p>
+
+                    <h3 class="subhead">A section</h3>
+
+                    <p>A numbered display equation:</p>
+
+                    \begin{equation}\label{eq:example}
+                    \norm{Tv - Tw}_\infty \le \gamma \norm{v - w}_\infty .
+                    \end{equation}
+
+                    <p>Reference it later as $\eqref{eq:example}$.</p>
+
+                    <div class="theorem">
+                        <span class="env-name">Theorem 1.</span> Statement of the result, which is
+                        rendered in italics by the stylesheet.
+                    </div>
+
+                    <div class="proof">
+                        <span class="env-name">Proof.</span>
+                        The argument.
+                        <span class="qed">$\square$</span>
+                    </div>
+
+<pre><code>def example():
+    return "code blocks are never typeset as math"
+</code></pre>
+
+                </div>
+
+                <div class="post-nav">
+                    <span class="next"><a href="index.html">All posts</a> &raquo;</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="secondary" class="secondary">
+
+            <!-- Keep a short list of recent posts here, newest first. -->
+            <div class="sidebar-block">
+                <h3>Recent posts</h3>
+                <ul class="archive-list">
+                    <li><a href="index.html">All posts</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Elsewhere</h3>
+                <ul class="archive-list">
+                    <li><a href="mailto:ychenfd@gmail.com">ychenfd@gmail.com</a></li>
+                    <li><a href="https://arxiv.org/search/?searchtype=author&amp;query=Chen%2C+Yuanlong" target="_blank" rel="noopener">arXiv listing</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="footer">
+        <p>&copy; 2026 Yuanlong Chen.
+        <span class="generator">Built as a plain static page.</span></p>
+    </div>
+
+</div>
+</body>
+</html>
