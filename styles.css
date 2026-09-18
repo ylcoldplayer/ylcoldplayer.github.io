@@ -276,3 +276,198 @@ h3 {
     h1, h2, .post-title { font-size: 1.7em; }
     .brief-title { font-size: 1.35em; }
 }
+
+/* ==========================================================================
+   Blog
+   ========================================================================== */
+
+/* On a post page the byline sits directly beneath the title, so pull it up
+   under the title's own margin and open a gap before the body text. */
+.entry > .post-metadata {
+    margin: -1.4em 0 1.6em 0;
+}
+
+.post-excerpt p { line-height: 1.4; }
+
+.more-link {
+    font-size: 0.95em;
+    white-space: nowrap;
+}
+
+/* ---- long-form post body ---- */
+
+.post-content h3.subhead {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.4em;
+    font-weight: normal;
+    color: #545454;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 120%;
+    margin: 1.8em 0 0.7em 0;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 0 0.15em 0;
+}
+
+.post-content ul,
+.post-content ol {
+    margin: 0 0 1em 0;
+    padding-left: 1.6em;
+}
+
+.post-content li {
+    line-height: 1.4;
+    margin: 0 0 0.4em 0;
+}
+
+blockquote {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.2em;
+    color: #a8a8a8;
+    line-height: 1.35;
+    margin: 0 0 1.2em 0;
+    padding: 0 40px;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1em;
+    color: #7ca653;
+}
+
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.05em;
+    line-height: 1.45;
+    color: #545454;
+    background: #fafafa;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    margin: 0 0 1.4em 0;
+    padding: 0.8em 1em;
+    overflow-x: auto;
+}
+
+pre code {
+    font-size: 1em;
+    color: inherit;
+}
+
+hr.post-rule {
+    border: none;
+    border-top: 1px solid #e5e5e5;
+    margin: 2em 0;
+}
+
+/* ---- theorem environments ---- */
+
+.theorem,
+.lemma,
+.proposition,
+.corollary,
+.definition,
+.remark,
+.example {
+    background: #fafeff;
+    border-top: 1px solid #cfe2e5;
+    border-bottom: 1px solid #cfe2e5;
+    line-height: 1.45;
+    margin: 0 0 1.4em 0;
+    padding: 0.8em 1em;
+}
+
+.theorem,
+.lemma,
+.proposition,
+.corollary {
+    font-style: italic;
+}
+
+.definition,
+.remark,
+.example {
+    font-style: normal;
+}
+
+.theorem p:last-child,
+.lemma p:last-child,
+.proposition p:last-child,
+.corollary p:last-child,
+.definition p:last-child,
+.remark p:last-child,
+.example p:last-child {
+    margin-bottom: 0;
+}
+
+.env-name {
+    font-style: normal;
+    font-weight: bold;
+    color: #545454;
+}
+
+.proof {
+    line-height: 1.4;
+    margin: 0 0 1.4em 0;
+}
+
+.proof > .env-name {
+    font-style: italic;
+    font-weight: normal;
+}
+
+.qed {
+    float: right;
+    margin-left: 0.5em;
+}
+
+.proof:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* ---- rendered math ---- */
+
+mjx-container[display="true"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.35em 0;
+}
+
+/* ---- post footer navigation ---- */
+
+.post-nav {
+    border-top: 1px solid #e5e5e5;
+    margin: 2.5em 0 0 0;
+    padding: 0.8em 0 0 0;
+    font-size: 0.95em;
+}
+
+.post-nav:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.post-nav .prev { float: left; }
+.post-nav .next { float: right; }
+
+/* ---- sidebar archive lists ---- */
+
+.secondary .archive-list li { margin: 0 0 0.45em 0; }
+
+.secondary .post-count {
+    color: #a8a8a8;
+    font-size: 0.9em;
+}
+
+@media (max-width: 800px) {
+    blockquote { padding: 0 20px; }
+
+    .post-nav .prev,
+    .post-nav .next {
+        float: none;
+        display: block;
+        margin-bottom: 0.4em;
+    }
+}

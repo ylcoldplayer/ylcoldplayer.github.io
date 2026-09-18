@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Budget pacing in repeated auctions, derived as online gradient descent on the dual of a fluid relaxation.">
+    <title>Budget pacing as dual gradient descent — Yuanlong Chen</title>
+    <link rel="stylesheet" href="../styles.css?v=20260918-2">
+    <script src="math.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body class="center">
+<div id="wrapper">
+
+    <div id="header">
+        <div id="intro">
+            <h1><span id="blog-title"><a href="../index.html">Yuanlong Chen</a></span></h1>
+            <p id="tagline">Ads bidding, pacing, and auction systems</p>
+        </div>
+        <div id="navigation">
+            <ul class="menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#publications">Publications</a></li>
+                <li><a href="../index.html#book">Book</a></li>
+                <li class="current-menu-item"><a href="index.html">Blog</a></li>
+                <li><a href="mailto:ychenfd@gmail.com">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <div id="primary" class="primary content">
+
+            <div class="entry">
+                <h2 class="post-title">Budget pacing as dual gradient descent</h2>
+                <p class="post-metadata">18 September, 2026 in advertising, optimization &middot; Tags: budget pacing, duality, online learning</p>
+
+                <div class="post-content">
+
+                    <p>A recurring question from engineers new to ads systems is why budget pacing
+                    controllers all end up looking the same: keep a single scalar, shade every bid
+                    by it, and nudge it up or down according to whether you are overspending. The
+                    answer is that this is exactly online gradient descent on the dual of a linear
+                    program, and the scalar is the Lagrange multiplier on the budget constraint. I
+                    want to write that derivation down carefully, because once you see it the design
+                    choices in a real pacing system stop looking arbitrary.</p>
+
+                    <h3 class="subhead">The fluid relaxation</h3>
+
+                    <p>Fix a single advertiser facing $T$ auction opportunities. At step $t$ the
+                    advertiser observes a value $v_t \ge 0$ for the impression, and the highest
+                    competing bid is $p_t \ge 0$. We assume a truthful (second-price) auction, so
+                    submitting a bid $b_t$ wins the impression precisely when $b_t > p_t$, and the
+                    advertiser then pays $p_t$. The advertiser has a budget $B$ for the horizon.</p>
+
+                    <p>Write $x_t \in \set{0,1}$ for the indicator that we win opportunity $t$. If
+                    we knew the whole sequence $(v_t, p_t)_{t=1}^T$ in advance and were allowed to
+                    fractionally allocate, the best achievable utility would be the value of the
+                    linear program</p>
+
+                    \begin{equation}\label{eq:fluid}
+                    \begin{aligned}
+                    \max_{x \in [0,1]^T} \quad & \sum_{t=1}^T (v_t - p_t)\, x_t \\
+                    \text{subject to} \quad & \sum_{t=1}^T p_t\, x_t \le B .
+                    \end{aligned}
+                    \end{equation}
+
+                    <p>This is the <em>fluid</em> or <em>hindsight</em> benchmark. It is a relaxation
+                    in two senses: it knows the future, and it allows fractional wins. Both make it
+                    optimistic, which is what we want from a benchmark.</p>
+
+                    <h3 class="subhead">Dualising the budget</h3>
+
+                    <p>Attach a multiplier $\lambda \ge 0$ to the budget constraint in
+                    $\eqref{eq:fluid}$. The Lagrangian is</p>
+
+                    \begin{equation}\label{eq:lagrangian}
+                    L(x, \lambda) \;=\; \sum_{t=1}^T (v_t - p_t)\, x_t \;-\; \lambda\left( \sum_{t=1}^T p_t\, x_t - B \right)
+                    \;=\; \sum_{t=1}^T \bigl( v_t - (1+\lambda)\, p_t \bigr) x_t \;+\; \lambda B .
+                    \end{equation}
+
+                    <p>The point of $\eqref{eq:lagrangian}$ is that the budget coupling is gone: the
+                    sum decouples across $t$. For a <em>fixed</em> $\lambda$, maximising over
+                    $x \in [0,1]^T$ is done independently at each step, and the maximiser is</p>
+
+                    \begin{equation}\label{eq:rule}
+                    x_t = 1 \iff v_t - (1+\lambda) p_t > 0 \iff p_t < \frac{v_t}{1+\lambda} .
+                    \end{equation}
+
+                    <p>Now compare $\eqref{eq:rule}$ with the auction rule. We win exactly when
+                    $b_t > p_t$. So the allocation prescribed by the dual is implemented <em>exactly</em>
+                    by submitting the shaded bid</p>
+
+                    \begin{equation}\label{eq:bid}
+                    b_t \;=\; \frac{v_t}{1 + \lambda} .
+                    \end{equation}
+
+                    <div class="remark">
+                        <span class="env-name">Remark 1.</span> This is the whole reason pacing is
+                        implemented as a multiplicative shade rather than, say, a probabilistic
+                        throttle. Shading by $1/(1+\lambda)$ is not a heuristic — it is the unique
+                        bid that makes a truthful auction reproduce the dual-optimal allocation
+                        $\eqref{eq:rule}$. Throttling (dropping a random fraction of auctions)
+                        implements a different, generally worse, allocation, because it discards
+                        high-value and low-value opportunities at the same rate.
+                    </div>
+
+                    <h3 class="subhead">Learning the multiplier online</h3>
+
+                    <p>In practice we do not know the right $\lambda$, because it depends on the
+                    competitive landscape over the whole horizon. But the dual function</p>
+
+                    \begin{equation}\label{eq:dual}
+                    D(\lambda) \;=\; \max_{x \in [0,1]^T} L(x, \lambda)
+                    \;=\; \sum_{t=1}^T \bigl( v_t - (1+\lambda) p_t \bigr)^+ \;+\; \lambda B
+                    \end{equation}
+
+                    <p>is convex in $\lambda$ (a supremum of affine functions), so we can run
+                    gradient descent on it. Differentiating $\eqref{eq:dual}$, a subgradient is
+                    $B - \sum_t p_t x_t$: the budget minus the spend. Splitting this across the $T$
+                    steps and writing $\rho = B/T$ for the target spend per opportunity, the
+                    per-step stochastic subgradient is $\rho - p_t x_t$. Descending it, and
+                    projecting onto $\lambda \ge 0$, gives the update</p>
+
+                    \begin{equation}\label{eq:update}
+                    \lambda_{t+1} \;=\; \Bigl[\, \lambda_t \;-\; \eta \bigl( \rho - z_t \bigr) \Bigr]^+ ,
+                    \qquad z_t = p_t x_t ,
+                    \end{equation}
+
+                    <p>where $z_t$ is the realised spend at step $t$ and $\eta > 0$ is a step size.
+                    Read $\eqref{eq:update}$ in plain language: if we spent more than the target
+                    rate ($z_t > \rho$), then $\lambda$ increases, bids get shaded harder, and we
+                    slow down. If we underspent, $\lambda$ decreases and we bid closer to value.
+                    That is a pacing controller, and we did not have to invent it.</p>
+
+                    <p>The resulting algorithm is a handful of lines:</p>
+
+<pre><code>lam = 0.0
+rho = B / T                      # target spend per opportunity
+for t in range(T):
+    v = value_model(request_t)
+    bid = v / (1.0 + lam)        # eq. (4)
+    won, paid = auction(bid)
+    z = paid if won else 0.0
+    lam = max(0.0, lam - eta * (rho - z))   # eq. (6)
+</code></pre>
+
+                    <h3 class="subhead">Why this is a good controller</h3>
+
+                    <p>The reason to prefer this derivation over a hand-tuned PID loop is that it
+                    comes with a guarantee. Suppose the pairs $(v_t, p_t)$ are drawn i.i.d. from
+                    some unknown distribution, and let $\mathrm{OPT}$ denote the expected value of
+                    the fluid benchmark $\eqref{eq:fluid}$.</p>
+
+                    <div class="theorem">
+                        <span class="env-name">Theorem 2 (Balseiro–Gur).</span> Run the bidding rule
+                        $\eqref{eq:bid}$ with the dual update $\eqref{eq:update}$ and step size
+                        $\eta = \Theta(1/\sqrt{T})$. Then the expected utility collected over the
+                        horizon is at least $\mathrm{OPT} - O(\sqrt{T})$, and the budget is never
+                        exceeded. The $\sqrt{T}$ rate is optimal: no algorithm, even one that knows
+                        the distribution, can do better than $\Omega(\sqrt{T})$ in the worst case.
+                    </div>
+
+                    <p>I will not reproduce the full argument, but the shape of it is worth
+                    internalising, because it explains the step size.</p>
+
+                    <div class="proof">
+                        <span class="env-name">Proof sketch.</span>
+                        Weak duality gives $\mathrm{OPT} \le D(\lambda)$ for every $\lambda \ge 0$,
+                        so it suffices to control how far the iterates $\lambda_t$ are from the
+                        minimiser of $D$. The update $\eqref{eq:update}$ is projected online
+                        gradient descent on a convex function whose subgradients are bounded by
+                        $\max(\rho, \bar p)$, where $\bar p$ is a bound on prices. Standard OGD
+                        analysis then yields a regret of $O(\eta T + 1/\eta)$ against the best fixed
+                        multiplier, and balancing the two terms gives $\eta \asymp 1/\sqrt{T}$ with
+                        value $O(\sqrt{T})$. The budget is respected by construction: once spend
+                        reaches $B$ the advertiser exits, and the analysis accounts for the
+                        truncated horizon separately.
+                        <span class="qed">$\square$</span>
+                    </div>
+
+                    <p>Two practical consequences fall out of the balancing step. First, the right
+                    step size scales with the inverse square root of the number of opportunities,
+                    not with wall-clock time — a campaign seeing $10^6$ requests per hour and one
+                    seeing $10^3$ need very different $\eta$. Second, because the guarantee is
+                    against a <em>fixed</em> multiplier, the controller is only as good as the
+                    stationarity of the environment; when the landscape shifts intraday you want a
+                    constant step size rather than a decaying one, trading asymptotic optimality for
+                    tracking ability.</p>
+
+                    <blockquote>The multiplier is not a tuning knob. It is a price — specifically,
+                    the shadow price of the budget constraint — and the controller is a mechanism
+                    for discovering it.</blockquote>
+
+                    <h3 class="subhead">Where the model breaks</h3>
+
+                    <p>The derivation above leans on assumptions that are worth naming, since each
+                    one is a place where production systems diverge:</p>
+
+                    <ul>
+                        <li><strong>Truthfulness.</strong> Equation $\eqref{eq:bid}$ relies on the
+                        auction being second-price. Under first-price rules the mapping from bid to
+                        allocation changes, and the optimal shade depends on a bid landscape model
+                        rather than on $\lambda$ alone.</li>
+                        <li><strong>A single constraint.</strong> With a budget, a ROI target, and
+                        frequency caps, $\lambda$ becomes a vector and $\eqref{eq:update}$ becomes a
+                        projection onto a more interesting set.</li>
+                        <li><strong>i.i.d. arrivals.</strong> Real traffic is strongly diurnal.
+                        Theorem 2 does not apply as stated, which is why production pacers layer a
+                        forecast of the daily traffic curve on top of $\rho$.</li>
+                        <li><strong>Value known at bid time.</strong> In practice $v_t$ is itself a
+                        model output with its own error, and that error interacts with the shading
+                        in ways the LP does not see.</li>
+                    </ul>
+
+                    <p>I discuss the multi-constraint case, and what changes when you replace the
+                    gradient step with a model-predictive controller, in
+                    <a href="../books/main.pdf">the pacing book</a> and in
+                    <a href="https://arxiv.org/abs/2603.07721" target="_blank" rel="noopener">arXiv:2603.07721</a>.</p>
+
+                </div>
+
+                <div class="post-nav">
+                    <span class="prev">&laquo; <a href="contraction-and-optimistic-policy-iteration.html">A contraction you can hear</a></span>
+                    <span class="next"><a href="index.html">All posts</a> &raquo;</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="secondary" class="secondary">
+
+            <div class="sidebar-block">
+                <h3>Recent posts</h3>
+                <ul class="archive-list">
+                    <li><a href="budget-pacing-as-dual-descent.html">Budget pacing as dual gradient descent</a></li>
+                    <li><a href="contraction-and-optimistic-policy-iteration.html">A contraction you can hear</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Categories</h3>
+                <ul class="archive-list">
+                    <li>advertising <span class="post-count">(1)</span></li>
+                    <li>optimization <span class="post-count">(1)</span></li>
+                    <li>reinforcement learning <span class="post-count">(1)</span></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Archives</h3>
+                <ul class="archive-list">
+                    <li>September 2026 <span class="post-count">(2)</span></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Elsewhere</h3>
+                <ul class="archive-list">
+                    <li><a href="mailto:ychenfd@gmail.com">ychenfd@gmail.com</a></li>
+                    <li><a href="https://arxiv.org/search/?searchtype=author&amp;query=Chen%2C+Yuanlong" target="_blank" rel="noopener">arXiv listing</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="footer">
+        <p>&copy; 2026 Yuanlong Chen.
+        <span class="generator">Built as a plain static page.</span></p>
+    </div>
+
+</div>
+</body>
+</html>

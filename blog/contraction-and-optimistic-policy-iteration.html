@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Why the Bellman operator's contraction property does not by itself settle the convergence of optimistic policy iteration.">
+    <title>A contraction you can hear — Yuanlong Chen</title>
+    <link rel="stylesheet" href="../styles.css?v=20260918-2">
+    <script src="math.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body class="center">
+<div id="wrapper">
+
+    <div id="header">
+        <div id="intro">
+            <h1><span id="blog-title"><a href="../index.html">Yuanlong Chen</a></span></h1>
+            <p id="tagline">Ads bidding, pacing, and auction systems</p>
+        </div>
+        <div id="navigation">
+            <ul class="menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#publications">Publications</a></li>
+                <li><a href="../index.html#book">Book</a></li>
+                <li class="current-menu-item"><a href="index.html">Blog</a></li>
+                <li><a href="mailto:ychenfd@gmail.com">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <div id="primary" class="primary content">
+
+            <div class="entry">
+                <h2 class="post-title">A contraction you can hear</h2>
+                <p class="post-metadata">5 September, 2026 in reinforcement learning &middot; Tags: dynamic programming, policy iteration</p>
+
+                <div class="post-content">
+
+                    <p>Dynamic programming has one theorem that does most of the work, and it is
+                    worth being precise about what it does and does not give you. The short version:
+                    the Bellman operator is a contraction, so value iteration converges; but
+                    optimistic policy iteration is not the Bellman operator, and its convergence is
+                    a genuinely more delicate question.</p>
+
+                    <h3 class="subhead">The operator</h3>
+
+                    <p>Fix a discounted MDP with finite state space $\mathcal{S}$, finite action
+                    space $\mathcal{A}$, reward $r(s,a) \in [0, R]$, transition kernel
+                    $P(s' \mid s,a)$, and discount factor $\gamma \in (0,1)$. Define the Bellman
+                    optimality operator $T$ acting on $v \in \R^{\mathcal S}$ by</p>
+
+                    \begin{equation}\label{eq:bellman}
+                    (T v)(s) \;=\; \max_{a \in \mathcal A} \left\{ r(s,a) \;+\; \gamma \sum_{s' \in \mathcal S} P(s' \mid s, a)\, v(s') \right\} .
+                    \end{equation}
+
+                    <p>The basic fact is that $\eqref{eq:bellman}$ shrinks distances in the
+                    supremum norm.</p>
+
+                    <div class="lemma">
+                        <span class="env-name">Lemma 1.</span> For all
+                        $v, w \in \R^{\mathcal S}$ we have
+                        $\norm{Tv - Tw}_\infty \le \gamma \norm{v - w}_\infty$.
+                    </div>
+
+                    <div class="proof">
+                        <span class="env-name">Proof.</span>
+                        Fix a state $s$ and let $a^\star$ attain the maximum in $(Tv)(s)$. Then
+                        $(Tw)(s) \ge r(s,a^\star) + \gamma \sum_{s'} P(s' \mid s,a^\star) w(s')$,
+                        since the max is at least the value at $a^\star$. Subtracting,
+                        \[
+                        (Tv)(s) - (Tw)(s) \;\le\; \gamma \sum_{s'} P(s' \mid s, a^\star) \bigl( v(s') - w(s') \bigr) \;\le\; \gamma \norm{v-w}_\infty ,
+                        \]
+                        using that $P(\cdot \mid s, a^\star)$ is a probability distribution.
+                        Exchanging the roles of $v$ and $w$ bounds the absolute difference, and
+                        taking the supremum over $s$ finishes the argument.
+                        <span class="qed">$\square$</span>
+                    </div>
+
+                    <p>Banach's fixed point theorem now hands us everything at once: $T$ has a unique
+                    fixed point $v^\star$, the iterates $v_{k+1} = T v_k$ converge to it from any
+                    starting point, and the convergence is geometric at rate $\gamma$, with
+                    $\norm{v_k - v^\star}_\infty \le \gamma^k \norm{v_0 - v^\star}_\infty$. This is
+                    value iteration, and it is about as clean as an algorithm gets.</p>
+
+                    <h3 class="subhead">Where optimism enters</h3>
+
+                    <p>Policy iteration takes a different route. Given a policy $\pi$, let $T_\pi$ be
+                    the operator that evaluates it,</p>
+
+                    \begin{equation}\label{eq:eval}
+                    (T_\pi v)(s) \;=\; r(s, \pi(s)) \;+\; \gamma \sum_{s'} P(s' \mid s, \pi(s))\, v(s') ,
+                    \end{equation}
+
+                    <p>which is also a $\gamma$-contraction, with fixed point $v^\pi$. Policy
+                    iteration alternates <em>exact</em> evaluation ($v \leftarrow v^\pi$, i.e.
+                    applying $T_\pi$ to convergence) with greedy improvement
+                    ($\pi \leftarrow \argmax$ w.r.t. $v$). Optimistic policy iteration (OPI) does
+                    the impatient thing and truncates the evaluation after finitely many sweeps:</p>
+
+                    \begin{equation}\label{eq:opi}
+                    \pi_k \in \mathcal{G}(v_k), \qquad v_{k+1} = T_{\pi_k}^{\,m_k} v_k ,
+                    \end{equation}
+
+                    <p>where $\mathcal{G}(v)$ denotes the set of policies greedy with respect to $v$
+                    and $m_k \ge 1$ is the number of evaluation sweeps. Setting $m_k = 1$ recovers
+                    value iteration; letting $m_k \to \infty$ recovers policy iteration. The whole
+                    family sits in between, and in practice one always runs something in between.</p>
+
+                    <div class="remark">
+                        <span class="env-name">Remark 2.</span> It is tempting to conclude from
+                        Lemma 1 that $\eqref{eq:opi}$ inherits the contraction and therefore
+                        converges. It does not follow. The map $v \mapsto T_{\mathcal{G}(v)}^{\,m} v$
+                        is a <em>composition of a contraction with a discontinuous selection</em>:
+                        the greedy set $\mathcal{G}(v)$ jumps as $v$ crosses a tie between actions.
+                        Each individual operator is well behaved; the composition need not be, and
+                        the map is not in general a contraction in any norm.
+                    </div>
+
+                    <p>With synchronous updates and a uniform sweep count this is still fine —
+                    monotonicity arguments rescue the conclusion, provided $v_0$ is initialised
+                    below $T v_0$. The situation gets genuinely harder once the updates become
+                    asynchronous or stochastic, so that different states are evaluated a different
+                    number of times and the sweep counts $m_k$ vary across the state space. Then the
+                    monotonicity argument loses its footing, and whether the iterates converge
+                    becomes sensitive to how the step sizes are chosen.</p>
+
+                    <p>That sensitivity is not merely a gap in the analysis. I constructed an
+                    explicit counterexample for the scalar-stepsize nonuniform Monte Carlo variant
+                    in <a href="https://arxiv.org/abs/2606.15978" target="_blank" rel="noopener">arXiv:2606.15978</a>,
+                    and the earlier convergence question for the stochastic shortest path setting is
+                    treated in <a href="https://arxiv.org/abs/1808.08763" target="_blank" rel="noopener">arXiv:1808.08763</a>.
+                    The moral I take from both: the contraction property is a statement about a
+                    single operator, and almost every practical algorithm is a composition of
+                    several. The composition is where the difficulty lives.</p>
+
+                </div>
+
+                <div class="post-nav">
+                    <span class="next"><a href="budget-pacing-as-dual-descent.html">Budget pacing as dual gradient descent</a> &raquo;</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="secondary" class="secondary">
+
+            <div class="sidebar-block">
+                <h3>Recent posts</h3>
+                <ul class="archive-list">
+                    <li><a href="budget-pacing-as-dual-descent.html">Budget pacing as dual gradient descent</a></li>
+                    <li><a href="contraction-and-optimistic-policy-iteration.html">A contraction you can hear</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Categories</h3>
+                <ul class="archive-list">
+                    <li>advertising <span class="post-count">(1)</span></li>
+                    <li>optimization <span class="post-count">(1)</span></li>
+                    <li>reinforcement learning <span class="post-count">(1)</span></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Archives</h3>
+                <ul class="archive-list">
+                    <li>September 2026 <span class="post-count">(2)</span></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-block">
+                <h3>Elsewhere</h3>
+                <ul class="archive-list">
+                    <li><a href="mailto:ychenfd@gmail.com">ychenfd@gmail.com</a></li>
+                    <li><a href="https://arxiv.org/search/?searchtype=author&amp;query=Chen%2C+Yuanlong" target="_blank" rel="noopener">arXiv listing</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="footer">
+        <p>&copy; 2026 Yuanlong Chen.
+        <span class="generator">Built as a plain static page.</span></p>
+    </div>
+
+</div>
+</body>
+</html>
