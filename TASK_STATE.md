@@ -1,14 +1,13 @@
 # Task checkpoint
 
-- Status: COMPLETE
+- Status: COMPLETE (pending one manual step by the site owner)
 - Last updated: 2026-09-18
-- Objective: Restyle the personal site to look like Terry Tao's blog (terrytao.wordpress.com).
-- Success criteria: The site adopts the visual language of that blog — Verdana body text, Times New Roman headings with hairline rules, teal links turning crimson on hover, green uppercase sidebar headings, a fixed-width wrapper with a narrow sidebar. Existing content (about, publications, book) is preserved.
-- Constraints: Keep all publication entries and links unchanged; keep the book PDF link.
-- Completed: Identified the source theme as Tarski (`/wp-content/themes/pub/tarski/style.css`) and pulled its real metrics. Rewrote `index.html` into a blog-style structure (header with title/tagline, nav bar, 500px content column + 200px sidebar, double-rule footer) and rewrote `styles.css` using Tarski's values: Verdana 76%, `#545454` text, Times headings, links `#006a80` / hover `#a8001c`, muted `#a8a8a8`, sidebar headings `#8fbf60`, footer `3px double #ccc`. Added a `max-width: 800px` media query (not in the original theme, which is fixed at `min-width: 760px`) so the columns stack on phones. Replaced an unverified arXiv author URL with a verified author-search URL.
-- Files modified: `index.html`, `styles.css`, `TASK_STATE.md`.
-- Commands/checks: Served locally and rendered in headless Chrome at wide and narrow viewports; `MQ800=true`, `scrollWidth == clientWidth` (no horizontal overflow), floats cleared when stacked; arXiv search URL returns 200 and lists the papers; `git diff --check` passed.
-- Known blockers: None.
-- Git state: branch `master`, HEAD `29ddd31`; uncommitted changes are the restyle.
-- Exact next action: Review the rendering, then commit and push to `origin/master` if it looks right.
-- Restart procedure: Run `git status --short`, inspect `git diff`, serve with `python3 -m http.server`, then commit and push.
+- Objective: Count visitors without showing the number on the site, viewable privately by the owner, keeping the site static.
+- Success criteria: Every page reports a pageview to a private dashboard; nothing is rendered on the page; local development is not counted.
+- Constraints: Static GitHub Pages, no build step, no backend of our own.
+- Completed: Added `analytics.js` (GoatCounter pageview beacon) and wired it into `index.html`, `blog/index.html` and `blog/_template.html`. Deleted the orphaned `script.js`, which held an empty Firebase config and fetched each visitor's IP from ipify to store under `visitorIPs/<ip>`. Guards: no-op while `CODE` is the placeholder, no counting from localhost / private ranges / `file:`, and Do Not Track is honoured.
+- Files modified: `analytics.js` (new), `index.html`, `blog/index.html`, `blog/_template.html`, `script.js` (deleted), `TASK_STATE.md`.
+- Commands/checks: Browser-based guard tests (node is broken locally: missing `icu4c` dylib) covering placeholder / localhost / remote host; only the remote case injects `https://gc.zgo.at/count.js` with endpoint `https://<code>.goatcounter.com/count`. Confirmed no network call is made on localhost, and that rendered page text is unchanged (only DOM match for "count" is the word "Counterexample" in a paper title).
+- Known blockers: `CODE` in `analytics.js` is still the placeholder `YOUR_GOATCOUNTER_CODE`, so nothing is counted yet.
+- Exact next action: Sign up at https://www.goatcounter.com/signup, then replace `CODE` in `analytics.js` with the chosen subdomain code.
+- Restart procedure: `git status --short`, serve with `python3 -m http.server`, confirm the console logs the "[analytics] disabled" notice while the placeholder is in place.
